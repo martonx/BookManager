@@ -3,8 +3,6 @@ using BookManager;
 using BookManager.Authors;
 using BookManager.Books;
 
-Console.WriteLine("Hello, Book Manager!");
-
 var isExit = false;
 do
 {

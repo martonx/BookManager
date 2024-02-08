@@ -17,7 +17,7 @@ public static class BookService
         do
         {
             Console.WriteLine("Mit szeretne csinálni");
-            Console.WriteLine("1 - Új, 2 - Módosítás, 3 - Törlés, 4 - Listázás, 5 - Kilépés");
+            Console.WriteLine("1 - Új, 2 - Módosítás, 3 - Törlés, 4 - Listázás, 5 - Visszalépés");
 
             if (!Enum.TryParse(Console.ReadLine(), out Operation selection))
             {
@@ -56,20 +56,11 @@ public static class BookService
             Console.WriteLine("Kérem a könyv címét:");
             newBook.Title = Console.ReadLine();
 
-            Console.WriteLine("Kérem a könyv kiadásának évét:");
-            if (!int.TryParse(Console.ReadLine(), out var year))
-            {
-                Console.WriteLine("Hibás szám");
+            var publishYear = GetPublishYear();
+            if (publishYear == 0)
                 continue;
-            }
 
-            if (year < 1500)
-            {
-                Console.WriteLine("Hibás év");
-                continue;
-            }
-
-            newBook.PublishYear = year;
+            newBook.PublishYear = publishYear;
 
             Console.WriteLine("Kérem a könyv eladott darabszámát:");
             if (!int.TryParse(Console.ReadLine(), out var sold))
@@ -80,12 +71,12 @@ public static class BookService
 
             if (sold < 0)
             {
-                Console.WriteLine("Hibás év");
+                Console.WriteLine("Hibás eladott darabszám");
                 continue;
             }
 
             newBook.SoldNumber = sold;
-            newBook.Id = books.Any() ? books.Max(book => book.Id) + 1 : 0;
+            newBook.Id = books.Any() ? books.Max(book => book.Id) + 1 : 1;
 
             books.Add(newBook);
             isExit = true;
@@ -116,20 +107,27 @@ public static class BookService
             Console.WriteLine($"Kérem a könyv új címét ({book.Title}):");
             book.Title = Console.ReadLine();
 
-            Console.WriteLine("Kérem a könyv kiadásának évét:");
-            if (!int.TryParse(Console.ReadLine(), out var year))
+            var publishYear = GetPublishYear();
+            if (publishYear == 0)
+                continue;
+
+            book.PublishYear = publishYear;
+
+            Console.WriteLine("Kérem a könyv eladott darabszámát:");
+            if (!int.TryParse(Console.ReadLine(), out var sold))
             {
-                Console.WriteLine("Hibás év");
+                Console.WriteLine("Hibás szám");
                 continue;
             }
 
-            if (year < 1500)
+            if (sold < 0)
             {
-                Console.WriteLine("Hibás év");
+                Console.WriteLine("Hibás eladott darabszám");
                 continue;
             }
 
-            book.PublishYear = year;
+            book.SoldNumber = sold;
+
             isExit = true;
         } while (!isExit);
     }
@@ -166,5 +164,23 @@ public static class BookService
         {
             Console.WriteLine($"{book.Id}\t{book.Title}\t{book.PublishYear}");
         }
+    }
+
+    private static int GetPublishYear()
+    {
+        Console.WriteLine("Kérem a könyv kiadásának évét:");
+        if (!int.TryParse(Console.ReadLine(), out var year))
+        {
+            Console.WriteLine("Hibás szám");
+            return 0;
+        }
+
+        if (year < 1500)
+        {
+            Console.WriteLine("Hibás év");
+            return 0;
+        }
+
+        return year;
     }
 }

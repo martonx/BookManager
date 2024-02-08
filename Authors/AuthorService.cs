@@ -71,7 +71,7 @@ public static class AuthorService
             }
 
             newAuthor.BornYear = year;
-            newAuthor.Id = authors.Any() ? authors.Max(author => author.Id) + 1 : 0;
+            newAuthor.Id = authors.Any() ? authors.Max(author => author.Id) + 1 : 1;
 
             authors.Add(newAuthor);
             isExit = true;
@@ -117,7 +117,29 @@ public static class AuthorService
 
             author.BornYear = year;
 
-            //TODO: könyvet hozzákapcsolni a szerzőhöz
+            Console.WriteLine("Kérem az alábbi könyvek közül válasszon");
+            BookService.List();
+            Console.WriteLine("Adja meg a könyv Id-ját");
+            if (!int.TryParse(Console.ReadLine(), out var bookId))
+            {
+                Console.WriteLine("hibás szám formátum!");
+                continue;
+            }
+
+            var book = BookService.GetBooks().FirstOrDefault(book => book.Id == bookId);
+            if (book is null)
+            {
+                Console.WriteLine("Könyv nem található!");
+                continue;
+            }
+
+            if (author.Books.Any(book => book.Id == bookId))
+            {
+                Console.WriteLine("Ez a könyv már létezik ennél a szerzőnél!");
+                continue;
+            }
+
+            author.Books.Add(book);
 
             isExit = true;
         } while (!isExit);

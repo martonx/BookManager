@@ -22,10 +22,29 @@ public static class FileService
 
     public static void Load()
     {
+        if (!File.Exists(filePath))
+        {
+            Console.WriteLine("File nem létezik, mentsél előbb!");
+            return;
+        }
+
         var json = File.ReadAllText(filePath);
 
-        var data = JsonSerializer.Deserialize<Data>(json);
-        AuthorService.LoadAuthors(data.Authors);
-        BookService.LoadBooks(data.Books);
+        if (string.IsNullOrWhiteSpace(json))
+        {
+            Console.WriteLine("Létezik, de üres a file!");
+            return;
+        }
+
+        try
+        {
+            var data = JsonSerializer.Deserialize<Data>(json);
+            AuthorService.LoadAuthors(data.Authors);
+            BookService.LoadBooks(data.Books);
+        }
+        catch (Exception)
+        {
+            Console.WriteLine("Hibás az adat a file-ban!");
+        }
     }
 }
